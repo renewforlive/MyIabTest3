@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.ican.peter.myiabtest3.util.IabHelper;
 import com.ican.peter.myiabtest3.util.IabResult;
 import com.ican.peter.myiabtest3.util.Inventory;
 import com.ican.peter.myiabtest3.util.Purchase;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Button
     Button btn1,btn2,btn3;
+
+    //尋找特定ID商品
+    List additionalSkuList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onIabSetupFinished(IabResult result) {
                 Log.d(TAG, "Setup finished.");
-
+                Toast.makeText(MainActivity.this, "setupfinished",Toast.LENGTH_SHORT).show();
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
                     complain("Problem setting up in-app billing: " + result);
@@ -70,11 +76,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (mHelper == null) return;
 
                 Log.d(TAG, "Setup successful. Querying inventory.");
-                try {
-                    mHelper.queryInventoryAsync(mGotInventoryListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    complain("Error querying inventory. Another async operation in progress.");
-                }
+//                try {
+//                    mHelper.queryInventoryAsync(mGotInventoryListener);
+//                } catch (IabHelper.IabAsyncInProgressException e) {
+//                    complain("Error querying inventory. Another async operation in progress.");
+//                }
             }
         });
     }
@@ -163,7 +169,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
-        if (mHelper == null) return;
+        if (mHelper == null) {
+            return;
+        }
 
         // Pass on the activity result to the helper for handling
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
